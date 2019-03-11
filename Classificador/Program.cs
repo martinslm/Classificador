@@ -170,12 +170,49 @@ namespace Classificador
             List<Individuo> individuos = new List<Individuo>();
             string[] database = CarregarDataBase();
             individuos = SeparadorDeAtributos(database);
-            //SOMENTE PARA TESTE SERÁ APAGADO DEPOIS.
-            foreach(var teste in individuos)
-            {
-                Console.WriteLine(teste.classe + "," + teste.a + "," + teste.b + "," + teste.c + "," + teste.c);
-            }
+            int quantidadeIndividuos = individuos.Count();
+            int contador = 1;
+            List<Individuo> Z1 = new List<Individuo>();
+            List<Individuo> Z2 = new List<Individuo>();
+            List<Individuo> Z3 = new List<Individuo>();
+            #region Divisão dos Z's
+            foreach (var divisao in individuos)
+            { int ContadorAnteriorZ1 = 1, ContadorAnteriorZ2 = 2, ContadorAnteriorZ3 = 3;
+                if(contador==1 
+                    || contador == ContadorAnteriorZ1 - 2)
+                {
+                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
+                    if(Z1.Count < quantidadeIndividuos/4)
+                    Z1.Add(add);
 
+                    ContadorAnteriorZ1 = contador;
+                    contador++;
+                }
+
+                if (contador == 2 
+                    || contador == ContadorAnteriorZ2 - 2)
+                {
+                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
+                    if (Z2.Count < quantidadeIndividuos / 4)
+                        Z2.Add(add);
+
+                    ContadorAnteriorZ2 = contador;
+                    contador++;
+                }
+
+                if (contador == 3 
+                    || contador == ContadorAnteriorZ3 - 2 
+                    || Z1.Count() == quantidadeIndividuos/4 && Z2.Count == quantidadeIndividuos/4)
+                {
+                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
+                    if (Z3.Count < (quantidadeIndividuos - Z1.Count() - Z2.Count()))
+                        Z3.Add(add);
+
+                    ContadorAnteriorZ3 = contador;
+                    contador++;
+                }
+            }
+            #endregion
             int K = 3;
             int tamTreinamento = 105; //ajustar para o tamanho do arquivo X 0,25
             for (int i = 0; i<tamTreinamento; i++)

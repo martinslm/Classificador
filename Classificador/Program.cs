@@ -118,7 +118,7 @@ namespace Classificador
             return Math.Sqrt(soma);
         }
 
-        public static string ClassificadorDeAmostras(List<Individuo> individuos, Individuo novoExemplo, int k)
+        public static string[] ClassificadorDeAmostras(List<Individuo> C1, List<Individuo> C2 , int k)
         {
             if(k%2 == 0)
             {
@@ -126,38 +126,46 @@ namespace Classificador
                 k = k <= 0 ? 1 : k;
             }
 
-            int quantidadeElementos = individuos.Count();
-            var distanciaIndividuos = new List<KeyValuePair<double, int>>();
-            for(int i = 0; i < quantidadeElementos; i++)
+            var tam = C1.Count();
+            string[] classesC1 = new string[tam];
+            int posicao = 0;
+            foreach (var elemento1 in C1)
             {
-                double distancia = obterDistanciaEuclidiana(individuos[i], novoExemplo);
-                distanciaIndividuos.Add(new KeyValuePair<double, int>(distancia, i));
+                var distanciaIndividuos = new List<KeyValuePair<double, Individuo>>();
+                foreach (var elemento2 in C2)
+                {
+                    double distancia = obterDistanciaEuclidiana(elemento1, elemento2);
+                    distanciaIndividuos.Add(new KeyValuePair<double, Individuo>(distancia, elemento1));
+                }
+
+                int contadorL = 0, contadorR = 0, contadorB = 0, contK = 0;
+                foreach (var dist in distanciaIndividuos)
+                {
+                    string classe = dist.Value.classe;
+
+                    if (classe == "L") //nome dos arquivos
+                        contadorL++;
+                    if (classe == "R")
+                        contadorR++;
+                    if (classe == "B")
+                        contadorB++;
+                    if (contK > k)
+                        break;
+
+                    contK++;
+                }
+                string classeClassificacao;
+                if (contadorL >= contadorR && contadorL >= contadorB)
+                    classeClassificacao = "L";
+                else if (contadorR >= contadorL && contadorR >= contadorB)
+                    classeClassificacao = "R";
+                else
+                    classeClassificacao = "B";
+                classesC1[posicao] = classeClassificacao;
+                posicao++;
+                distanciaIndividuos = null;
             }
-
-            int contador1 = 0, contador2 = 0, contador3 = 0, contK = 0;
-            foreach( var dist in distanciaIndividuos)
-            {
-                string classe = individuos[dist.Value].classe;
-
-                if (classe == "Iris-setosa") //nome dos arquivos
-                    contador1++;
-                if (classe == "Iris-versicolor")
-                    contador2++;
-                if (classe == "Iris-virginica")
-                    contador3++;
-                if (contK > k)
-                    break;
-
-                contK++;
-            }
-            string classeClassificacao;
-            if (contador1 >= contador2 && contador1 >= contador3)
-                classeClassificacao = "Iris-setosa";
-            else if (contador2 >= contador1 && contador2 >= contador3)
-                classeClassificacao = "Iris-versicolor";
-            else
-                classeClassificacao = "Iris-virginica";
-            return classeClassificacao;
+            return classesC1;
         }
 
 
@@ -177,9 +185,11 @@ namespace Classificador
             List<Individuo> Z3 = new List<Individuo>();
             #region Divisão dos Z's
             foreach (var divisao in individuos)
-            { int ContadorAnteriorZ1 = 1, ContadorAnteriorZ2 = 2, ContadorAnteriorZ3 = 3;
-                if(contador==1 
-                    || contador == ContadorAnteriorZ1 - 2)
+            {
+                #region teste
+                /*int ContadorAnteriorZ1 = 1, ContadorAnteriorZ2 = 2, ContadorAnteriorZ3 = 3;
+                if(contador==1 || contador != 3 
+                    || contador == ContadorAnteriorZ1 + 2)
                 {
                     Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
                     if(Z1.Count < quantidadeIndividuos/4)
@@ -187,10 +197,11 @@ namespace Classificador
 
                     ContadorAnteriorZ1 = contador;
                     contador++;
+                    continue;
                 }
 
                 if (contador == 2 
-                    || contador == ContadorAnteriorZ2 - 2)
+                    || contador == ContadorAnteriorZ2 + 2)
                 {
                     Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
                     if (Z2.Count < quantidadeIndividuos / 4)
@@ -198,64 +209,56 @@ namespace Classificador
 
                     ContadorAnteriorZ2 = contador;
                     contador++;
+                    continue;
                 }
 
                 if (contador == 3 
-                    || contador == ContadorAnteriorZ3 - 2 
-                    || Z1.Count() == quantidadeIndividuos/4 && Z2.Count == quantidadeIndividuos/4)
-                {
+                    || contador == ContadorAnteriorZ3 + 2 
+                    || Z1.Count() == quantidadeIndividuos/4 && Z2.Count == quantidadeIndividuos/4)                {
                     Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
                     if (Z3.Count < (quantidadeIndividuos - Z1.Count() - Z2.Count()))
                         Z3.Add(add);
 
                     ContadorAnteriorZ3 = contador;
                     contador++;
+                    continue;
+                }*/
+                #endregion
+                if(contador <= 156)
+                {
+                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
+                    Z1.Add(add);
                 }
+                if (contador > 156 && contador <= 312)
+                {
+                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
+                    Z2.Add(add);
+                }
+                if (contador > 312)
+                {
+                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
+                    Z3.Add(add);
+                }
+                contador++;
             }
             #endregion
-            int K = 3;
-            int tamTreinamento = 105; //ajustar para o tamanho do arquivo X 0,25
-            for (int i = 0; i<tamTreinamento; i++)
-            {
-                string classe;
-                double a, b, c, d;
-                a = Convert.ToDouble(Console.ReadLine());
-                b = Convert.ToDouble(Console.ReadLine());
-                c = Convert.ToDouble(Console.ReadLine());
-                d = Convert.ToDouble(Console.ReadLine());
-                classe = Console.ReadLine();
-                 
-                Individuo individuo = new Individuo(classe, a, b, c, d);
-
-                individuos.Add(individuo);
-            }
-
+            int K = 1;
             int acertos = 0;
-            int tamanhoTestes = 150 - tamTreinamento;
+            int a = 0;
+                string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
 
-            for(int i = 0; i < tamanhoTestes; i++)
+            foreach (var metricaAcertos in Z1)
             {
-                string classe;
-                double a, b, c, d;
-
-                a = Convert.ToDouble(Console.ReadLine());
-                b = Convert.ToDouble(Console.ReadLine());
-                c = Convert.ToDouble(Console.ReadLine()); 
-                d = Convert.ToDouble(Console.ReadLine());
-                classe = Console.ReadLine();
-
-                Individuo individuo = new Individuo(classe, a, b, c, d);
-                string classeObtida = ClassificadorDeAmostras(individuos, individuo, K);
-                Console.WriteLine("Classe esperada:" + classe + "\nClasse obtida:" + classeObtida);
-
-                if (classe == classeObtida)
+                Console.WriteLine(metricaAcertos.classe.ToString() + "///" + classeObtida[a].ToString());
+                if (metricaAcertos.classe == classeObtida[a])
+                { 
                     acertos++;
-
-                var erros = tamanhoTestes - acertos;
-
-                Console.WriteLine("Quantidade de acertos:" + acertos + "\nQuantidade de erros:" + erros);
-
+                }
+                a++;
             }
+
+                Console.WriteLine("Quantidade de acertos:" + acertos);
+            Console.ReadKey();
 
             //testa as classes para ver se não foi esquecido nenhuma virgula
             //randomizador de dados e distribuidor

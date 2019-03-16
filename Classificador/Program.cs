@@ -13,6 +13,7 @@ namespace Classificador
         {
             private string _classe;
             private double _a, _b, _c, _d;
+            private bool _trocado;
 
             //Construtor. Os Doubles variam de acordo com a quantidade de atributos da tabela.
             public Individuo(string classe, double a, double b, double c, double d)
@@ -22,8 +23,8 @@ namespace Classificador
                 _c = c;
                 _d = d;
                 _classe = classe;
+                _trocado = false;
             }
-
             public double a {
                 get
                 {
@@ -34,7 +35,6 @@ namespace Classificador
                     _a = value;
                 }
             }
-
             public double b
             {
                 get
@@ -46,7 +46,6 @@ namespace Classificador
                     _b = value;
                 }
             }
-
             public double c
             {
                 get
@@ -58,7 +57,6 @@ namespace Classificador
                     _c = value;
                 }
             }
-
             public double d
             {
                 get
@@ -81,6 +79,17 @@ namespace Classificador
                     _classe = value;
                 }
             }
+            public bool trocado
+            {
+                get
+                {
+                    return _trocado;
+                }
+                set
+                {
+                    _trocado = value;
+                }
+            }
         }
         #endregion
         #region [Functions]
@@ -91,6 +100,7 @@ namespace Classificador
 
             return lines;
         }
+        //Faz a leitura da base de dados e transforma ela em objetos do tipo individuo. 
         public static List<Individuo> SeparadorDeAtributos(string[] dataBase)
         {
             List<Individuo> individuos = new List<Individuo>();
@@ -117,7 +127,6 @@ namespace Classificador
                 + Math.Pow((ind1.d - ind2.d), 2);
             return Math.Sqrt(soma);
         }
-
         public static string[] ClassificadorDeAmostras(List<Individuo> C1, List<Individuo> C2 , int k)
         {
             if(k%2 == 0)
@@ -125,7 +134,6 @@ namespace Classificador
                 k--;
                 k = k <= 0 ? 1 : k;
             }
-
             var tam = C1.Count();
             string[] classesC1 = new string[tam];
             int posicao = 0;
@@ -135,13 +143,14 @@ namespace Classificador
                 foreach (var elemento2 in C2)
                 {
                     double distancia = obterDistanciaEuclidiana(elemento1, elemento2);
-                    distanciaIndividuos.Add(new KeyValuePair<double, Individuo>(distancia, elemento1));
+                    distanciaIndividuos.Add(new KeyValuePair<double, Individuo>(distancia, elemento2));
                 }
+                distanciaIndividuos.Sort((x,y) => x.Key.CompareTo(y.Key));
 
-                int contadorL = 0, contadorR = 0, contadorB = 0, contK = 0;
-                foreach (var dist in distanciaIndividuos)
+                int contadorL = 0, contadorR = 0, contadorB = 0;
+                for (int i = 0; i < k; i++)
                 {
-                    string classe = dist.Value.classe;
+                    string classe = distanciaIndividuos[i].Value.classe;
 
                     if (classe == "L") //nome dos arquivos
                         contadorL++;
@@ -149,10 +158,6 @@ namespace Classificador
                         contadorR++;
                     if (classe == "B")
                         contadorB++;
-                    if (contK > k)
-                        break;
-
-                    contK++;
                 }
                 string classeClassificacao;
                 if (contadorL >= contadorR && contadorL >= contadorB)
@@ -167,10 +172,6 @@ namespace Classificador
             }
             return classesC1;
         }
-
-
-
-
         #endregion
 
         static void Main(string[] args)
@@ -180,91 +181,140 @@ namespace Classificador
             individuos = SeparadorDeAtributos(database);
             int quantidadeIndividuos = individuos.Count();
             int contador = 1;
+            #region Divisão por Classe (Base pra dividir os Z's
+            List<Individuo> ListL = new List<Individuo>();
+            List<Individuo> ListB = new List<Individuo>();
+            List<Individuo> ListR = new List<Individuo>();
+            foreach (var indv in individuos)
+            {
+                if (indv.classe == "L")
+                {
+                    ListL.Add(indv);
+                    continue;
+                }
+                if(indv.classe == "R")
+                {
+                    ListR.Add(indv);
+                    continue;
+                }
+                if(indv.classe == "B")
+                {
+                    ListB.Add(indv);
+                    continue;
+                }
+            }
+            #endregion
+            #region Divisão dos Z's
+            int contadorDistL = 1, contadorDistR = 1, contadorDistB = 1;
             List<Individuo> Z1 = new List<Individuo>();
             List<Individuo> Z2 = new List<Individuo>();
             List<Individuo> Z3 = new List<Individuo>();
-            #region Divisão dos Z's
-            foreach (var divisao in individuos)
+            //Distribuição de L para Z1, Z2 e Z3
+            foreach (var distL in ListL)
             {
-                #region teste
-                /*int ContadorAnteriorZ1 = 1, ContadorAnteriorZ2 = 2, ContadorAnteriorZ3 = 3;
-                if(contador==1 || contador != 3 
-                    || contador == ContadorAnteriorZ1 + 2)
+                if(contadorDistL <= 72)
                 {
-                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
-                    if(Z1.Count < quantidadeIndividuos/4)
-                    Z1.Add(add);
-
-                    ContadorAnteriorZ1 = contador;
-                    contador++;
+                    Z1.Add(distL);
+                    contadorDistL++;
                     continue;
                 }
-
-                if (contador == 2 
-                    || contador == ContadorAnteriorZ2 + 2)
+                if(contadorDistL <= 144)
                 {
-                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
-                    if (Z2.Count < quantidadeIndividuos / 4)
-                        Z2.Add(add);
-
-                    ContadorAnteriorZ2 = contador;
-                    contador++;
+                    Z2.Add(distL);
+                    contadorDistL++;
                     continue;
                 }
-
-                if (contador == 3 
-                    || contador == ContadorAnteriorZ3 + 2 
-                    || Z1.Count() == quantidadeIndividuos/4 && Z2.Count == quantidadeIndividuos/4)                {
-                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
-                    if (Z3.Count < (quantidadeIndividuos - Z1.Count() - Z2.Count()))
-                        Z3.Add(add);
-
-                    ContadorAnteriorZ3 = contador;
-                    contador++;
+                if(contadorDistL <= 288)
+                {
+                    Z3.Add(distL);
+                    contadorDistL++;
                     continue;
-                }*/
-                #endregion
-                if(contador <= 156)
-                {
-                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
-                    Z1.Add(add);
                 }
-                if (contador > 156 && contador <= 312)
+             }
+            //Distribuição de B para Z1, Z2 e Z3
+            foreach (var distB in ListB)
+            {
+                if (contadorDistB <= 12)
                 {
-                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
-                    Z2.Add(add);
+                    Z1.Add(distB);
+                    contadorDistB++;
+                    continue;
                 }
-                if (contador > 312)
+                if (contadorDistB <= 24)
                 {
-                    Individuo add = new Individuo(divisao.classe, divisao.a, divisao.b, divisao.c, divisao.d);
-                    Z3.Add(add);
+                    Z2.Add(distB);
+                    contadorDistB++;
+                    continue;
                 }
-                contador++;
+                if (contadorDistB <= 49)
+                {
+                    Z3.Add(distB);
+                    contadorDistB++;
+                    continue;
+                }
+            }
+            //Distribuição de R para Z1, Z2 e Z3
+            foreach (var distR in ListR)
+            {
+                if (contadorDistR <= 72)
+                {
+                    Z1.Add(distR);
+                    contadorDistR++;
+                    continue;
+                }
+                if (contadorDistR <= 144)
+                {
+                    Z2.Add(distR);
+                    contadorDistR++;
+                    continue;
+                }
+                if (contadorDistR <= 288)
+                {
+                    Z3.Add(distR);
+                    contadorDistR++;
+                    continue;
+                }
             }
             #endregion
-            int K = 1;
-            int acertos = 0;
-            int a = 0;
-                string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
-
-            foreach (var metricaAcertos in Z1)
+            int K = 19;
+            for (int z = 1; z <= 30; z++)
             {
-                Console.WriteLine(metricaAcertos.classe.ToString() + "///" + classeObtida[a].ToString());
-                if (metricaAcertos.classe == classeObtida[a])
-                { 
-                    acertos++;
+                string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
+                int acertos = 0, erros = 0;
+                int a = 0;
+                Individuo auxTroca = null, auxTroca2 = null;
+                foreach (var metricaAcertos in Z1)
+                {
+                    if (metricaAcertos.classe == classeObtida[a])
+                    {
+                        acertos++;
+                    }
+                    else
+                    {
+                        erros++;
+                        if (metricaAcertos.trocado == false)
+                        {
+                            auxTroca = metricaAcertos;
+                            auxTroca2 = Z2.Where(x => x.classe == metricaAcertos.classe).First();
+                        }
+                    }
+                    a++;
                 }
-                a++;
-            }
-
+                if (auxTroca != null || auxTroca2 != null)
+                {
+                    Z1.Remove(auxTroca);
+                    Z2.Remove(auxTroca2);
+                    auxTroca.trocado = true;
+                    auxTroca2.trocado = true;
+                    Z1.Add(auxTroca2);
+                    Z2.Add(auxTroca);
+                }
                 Console.WriteLine("Quantidade de acertos:" + acertos);
+                Console.WriteLine("Erros: " + erros);
+                Console.WriteLine("Taxa de acerto: " + (acertos * 100) / Z1.Count() + "%");
+            }
             Console.ReadKey();
 
-            //testa as classes para ver se não foi esquecido nenhuma virgula
-            //randomizador de dados e distribuidor
-
-            //CLASSE TAOKEI
-            //CARREGAMENTO DO ARQUIVO NO CONSOLE
             // DIVISÃO DA BASE E TESTES
             //TAXA DE ACERTO - TROCADOURO ( Z1 POR Z2)
             //MEDIA E DESVIO DE PADRÃO

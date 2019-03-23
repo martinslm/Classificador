@@ -14,6 +14,8 @@ namespace Classificador
             private string _classe;
             private double _a, _b, _c, _d;
             private bool _trocado;
+            private bool _usado;
+            private bool _errado;
 
             //Construtor. Os Doubles variam de acordo com a quantidade de atributos da tabela.
             public Individuo(string classe, double a, double b, double c, double d)
@@ -89,6 +91,77 @@ namespace Classificador
                 {
                     _trocado = value;
                 }
+            }
+            public bool usado
+            {
+                get
+                {
+                    return _usado;
+                }
+                set
+                {
+                    _usado = value;
+                }
+            }
+            public bool errado
+            {
+                get
+                {
+                    return _errado;
+                }
+                set
+                {
+                    _errado = value;
+                }
+            }
+        }
+        #endregion
+        #region [classe Indicadores]
+        public class Indicadores
+        {
+            private int _acertos;
+            private int _erros;
+            private double _taxaDeAcerto;
+
+            public int acertos
+            {
+                get
+                {
+                    return _acertos;
+                }
+                set
+                {
+                    _acertos = value;
+                }
+            }
+            public int erros
+            {
+                get
+                {
+                    return _erros;
+                }
+                set
+                {
+                    _erros = value;
+                }
+            }
+            public double taxaDeAcerto
+            {
+                get
+                {
+                    return _taxaDeAcerto;
+                }
+                set
+                {
+                    _taxaDeAcerto = value;
+                }
+            }
+
+            public Indicadores(int acertos, int erros, double taxaDeAcerto)
+            {
+                _acertos = acertos;
+                _erros = erros;
+                _taxaDeAcerto = taxaDeAcerto;
             }
         }
         #endregion
@@ -176,28 +249,38 @@ namespace Classificador
 
         static void Main(string[] args)
         {
+            List<Indicadores> ResultadoTestes = new List<Indicadores>();
             List<Individuo> individuos = new List<Individuo>();
             string[] database = CarregarDataBase();
             individuos = SeparadorDeAtributos(database);
             int quantidadeIndividuos = individuos.Count();
-            int contador = 1;
-            #region Divisão por Classe (Base pra dividir os Z's
+            int K = 19;
+
             List<Individuo> ListL = new List<Individuo>();
             List<Individuo> ListB = new List<Individuo>();
             List<Individuo> ListR = new List<Individuo>();
-            foreach (var indv in individuos)
+            List<Individuo> Z1 = new List<Individuo>();
+            List<Individuo> Z2 = new List<Individuo>();
+            List<Individuo> Z3 = new List<Individuo>();
+            
+            for (int contador = 1; contador <= 30; contador++)
+            { 
+            int acertos = 0, erros = 0;
+            double taxaDeAcerto = 0;
+            #region Divisão por Classe (Base pra dividir os Z's)
+                foreach (var indv in individuos)
             {
                 if (indv.classe == "L")
                 {
                     ListL.Add(indv);
                     continue;
                 }
-                if(indv.classe == "R")
+                if (indv.classe == "R")
                 {
                     ListR.Add(indv);
                     continue;
                 }
-                if(indv.classe == "B")
+                if (indv.classe == "B")
                 {
                     ListB.Add(indv);
                     continue;
@@ -205,120 +288,186 @@ namespace Classificador
             }
             #endregion
             #region Divisão dos Z's
-            int contadorDistL = 1, contadorDistR = 1, contadorDistB = 1;
-            List<Individuo> Z1 = new List<Individuo>();
-            List<Individuo> Z2 = new List<Individuo>();
-            List<Individuo> Z3 = new List<Individuo>();
-            //Distribuição de L para Z1, Z2 e Z3
-            foreach (var distL in ListL)
+            Random randNum = new Random();
+            Individuo AuxAdd;
+            #region [L para Z1]
+                while (Z1.Count() < 72)
             {
-                if(contadorDistL <= 72)
+                AuxAdd = ListL.ElementAt(randNum.Next(ListL.Count() - 1));
+                if (!AuxAdd.usado)
                 {
-                    Z1.Add(distL);
-                    contadorDistL++;
-                    continue;
-                }
-                if(contadorDistL <= 144)
-                {
-                    Z2.Add(distL);
-                    contadorDistL++;
-                    continue;
-                }
-                if(contadorDistL <= 288)
-                {
-                    Z3.Add(distL);
-                    contadorDistL++;
-                    continue;
-                }
-             }
-            //Distribuição de B para Z1, Z2 e Z3
-            foreach (var distB in ListB)
-            {
-                if (contadorDistB <= 12)
-                {
-                    Z1.Add(distB);
-                    contadorDistB++;
-                    continue;
-                }
-                if (contadorDistB <= 24)
-                {
-                    Z2.Add(distB);
-                    contadorDistB++;
-                    continue;
-                }
-                if (contadorDistB <= 49)
-                {
-                    Z3.Add(distB);
-                    contadorDistB++;
-                    continue;
-                }
-            }
-            //Distribuição de R para Z1, Z2 e Z3
-            foreach (var distR in ListR)
-            {
-                if (contadorDistR <= 72)
-                {
-                    Z1.Add(distR);
-                    contadorDistR++;
-                    continue;
-                }
-                if (contadorDistR <= 144)
-                {
-                    Z2.Add(distR);
-                    contadorDistR++;
-                    continue;
-                }
-                if (contadorDistR <= 288)
-                {
-                    Z3.Add(distR);
-                    contadorDistR++;
-                    continue;
+                    AuxAdd.usado = true;
+                    Z1.Add(AuxAdd);
                 }
             }
             #endregion
-            int K = 19;
-            for (int z = 1; z <= 30; z++)
+            #region [L para Z2] 
+            while (Z2.Count() < 72)
             {
-                string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
-                int acertos = 0, erros = 0;
-                int a = 0;
-                Individuo auxTroca = null, auxTroca2 = null;
-                foreach (var metricaAcertos in Z1)
+                
+                AuxAdd = ListL.ElementAt(randNum.Next(ListL.Count() - 1));
+                if (!AuxAdd.usado)
                 {
-                    if (metricaAcertos.classe == classeObtida[a])
-                    {
-                        acertos++;
-                    }
-                    else
-                    {
-                        erros++;
-                        if (metricaAcertos.trocado == false)
-                        {
-                            auxTroca = metricaAcertos;
-                            auxTroca2 = Z2.Where(x => x.classe == metricaAcertos.classe).First();
-                        }
-                    }
-                    a++;
+                    AuxAdd.usado = true;
+                    Z2.Add(AuxAdd);
                 }
-                if (auxTroca != null || auxTroca2 != null)
-                {
-                    Z1.Remove(auxTroca);
-                    Z2.Remove(auxTroca2);
-                    auxTroca.trocado = true;
-                    auxTroca2.trocado = true;
-                    Z1.Add(auxTroca2);
-                    Z2.Add(auxTroca);
-                }
-                Console.WriteLine("Quantidade de acertos:" + acertos);
-                Console.WriteLine("Erros: " + erros);
-                Console.WriteLine("Taxa de acerto: " + (acertos * 100) / Z1.Count() + "%");
             }
+                #endregion
+            #region [L para Z3]
+            while (Z3.Count() < 144)
+            {
+                AuxAdd = ListL.Where(c => c.usado == false).First();
+                AuxAdd.usado = true;
+                Z3.Add(AuxAdd);
+            }
+            #endregion
+            #region [B para Z1]
+            while (Z1.Count() < 84) // 72 já inseridos (L) + 12 que deverão ser inseridos em (B)
+            {
+                AuxAdd = ListB.ElementAt(randNum.Next(ListB.Count() - 1));
+                if (!AuxAdd.usado)
+                {
+                    AuxAdd.usado = true;
+                    Z1.Add(AuxAdd);
+                }
+            }
+            #endregion
+            #region [B para Z2]
+            while (Z2.Count() < 84)
+            {
+                AuxAdd = ListB.ElementAt(randNum.Next(ListB.Count() - 1));
+                if (!AuxAdd.usado)
+                {
+                    AuxAdd.usado = true;
+                    Z2.Add(AuxAdd);
+                }
+            }
+            #endregion
+            #region [B para Z3]
+            while (Z3.Count() < 169)
+            {
+                AuxAdd = ListB.Where(c => c.usado == false).First();
+                AuxAdd.usado = true;
+                Z3.Add(AuxAdd);
+            }
+            #endregion
+            #region [R para Z1]
+            while (Z1.Count() < 156) // 72 já inseridos (L) + 12 também já inseridos (B) e 72  que deverão ser inseridos em (R)
+            {
+                AuxAdd = ListR.ElementAt(randNum.Next(ListR.Count() - 1));
+                if (!AuxAdd.usado)
+                {
+                    AuxAdd.usado = true;
+                    Z1.Add(AuxAdd);
+                }
+            }
+            #endregion
+            #region [R para Z2]
+            while (Z2.Count() < 156) // 72 já inseridos (L) + 12 também já inseridos (B) e 72  que deverão ser inseridos em (R)
+            {
+                AuxAdd = ListR.ElementAt(randNum.Next(ListR.Count() - 1));
+                if (!AuxAdd.usado)
+                {
+                    AuxAdd.usado = true;
+                    Z2.Add(AuxAdd);
+                }
+            }
+            #endregion
+            #region [R para Z3]
+            while (Z3.Count() < 313)
+            {
+                    AuxAdd = ListR.Where(c => c.usado == false).First();
+                    AuxAdd.usado = true;
+                    Z3.Add(AuxAdd);
+            }
+            #endregion
+            #endregion
+            string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
+            int a = 0;
+            Individuo auxTroca = null, auxTroca2 = null;
+            #region Verifica os errados em Z1
+            foreach (var metricaAcertos in Z1)
+            {
+                if (metricaAcertos.classe != classeObtida[a])
+                {
+                    metricaAcertos.errado = true;
+                }
+                //indicador de posição da classe - Ou seja, auxiliar do Foreach
+                a++;
+            }
+            #endregion
+            #region [Troca o que tá errado em Z1 com algum Z2 com classe igual]
+            while (Z1.Any(e => e.errado == true))
+            {
+                auxTroca = Z1.Where(e => e.errado == true).First();
+                auxTroca2 = Z2.Where(c => c.classe == auxTroca.classe).First();
+                Z1.Remove(auxTroca);
+                Z2.Remove(auxTroca2);
+                auxTroca.trocado = true;
+                auxTroca.errado = false;
+                auxTroca2.trocado = true;
+                Z1.Add(auxTroca2);
+                Z2.Add(auxTroca);
+            }
+            #endregion
+            #region [Limpeza das Variaveis para a "Próxima Rodada"]
+            foreach (var limpZ1 in Z1)
+            {
+                    limpZ1.trocado = false;
+                    limpZ1.usado = false;
+            }
+
+            foreach (var limpZ2 in Z2)
+            {
+                    limpZ2.trocado = false;
+                    limpZ2.usado = false;
+            }
+            #endregion
+            //Testa Z3 com Z2 e retorna os resultados.
+            classeObtida = ClassificadorDeAmostras(Z3, Z2, K);
+                #region Verifica os acertos em Z3
+             a = 0;
+            foreach (var metricaAcertos in Z3)
+            {
+                if (metricaAcertos.classe == classeObtida[a])
+                {
+                    acertos++;
+                }
+                else
+                {
+                    erros++;
+                }
+                //indicador de posição da classe - Ou seja, auxiliar do Foreach
+                a++;
+            }
+                #endregion
+
+             #region [Grava a quantidade de acertos para fazer os relatorios depois]
+             taxaDeAcerto = (acertos * 100) / Z3.Count();
+            Indicadores indicador = new Indicadores(acertos, erros, taxaDeAcerto);
+            ResultadoTestes.Add(indicador);
+            #endregion
+        }
+
+            #region [Calculo Final]
+            double soma = 0, media, desvioPadrao;
+            foreach(var baseDeCalculo in ResultadoTestes)
+            {
+                soma += baseDeCalculo.taxaDeAcerto;
+            }
+            media = soma / ResultadoTestes.Count();
+            soma = 0;
+            foreach(var baseDeCalculo in ResultadoTestes)
+            {
+                Console.Write(baseDeCalculo.taxaDeAcerto + ",");
+                soma += Math.Pow((baseDeCalculo.taxaDeAcerto - media), 2);
+            }
+            desvioPadrao = Math.Sqrt(soma / ResultadoTestes.Count());
+            Console.WriteLine("Media:" + media);
+            Console.WriteLine("Desvio Padrão:" + desvioPadrao);
+            #endregion
             Console.ReadKey();
 
-            // DIVISÃO DA BASE E TESTES
-            //TAXA DE ACERTO - TROCADOURO ( Z1 POR Z2)
-            //MEDIA E DESVIO DE PADRÃO
-            //ARMAZENAMENTO DE ACERTOS
         }
     }
 }

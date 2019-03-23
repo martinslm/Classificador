@@ -459,7 +459,6 @@ namespace Classificador
             soma = 0;
             foreach(var baseDeCalculo in ResultadoTestes)
             {
-                Console.Write(baseDeCalculo.taxaDeAcerto + ",");
                 soma += Math.Pow((baseDeCalculo.taxaDeAcerto - media), 2);
             }
             desvioPadrao = Math.Sqrt(soma / ResultadoTestes.Count());

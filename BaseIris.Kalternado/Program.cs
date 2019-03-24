@@ -264,7 +264,7 @@ namespace BaseIris.Kalternado
             List<Individuo> Z2 = new List<Individuo>();
             List<Individuo> Z3 = new List<Individuo>();
 
-            Console.WriteLine("Iniciando... \n Database: Balance Scale utilizando K fixo.");
+            Console.WriteLine("Iniciando... \n Database: Iris utilizando K fixo.");
             for (int contador = 1; contador <= 30; contador++)
             {
                 int acertos = 0, erros = 0;

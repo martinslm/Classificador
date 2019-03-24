@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseBalanceScale.Kfixo
+namespace BaseBalanceScale.Kalternado
 {
     class Program
     {
@@ -27,7 +27,8 @@ namespace BaseBalanceScale.Kfixo
                 _classe = classe;
                 _trocado = false;
             }
-            public double a {
+            public double a
+            {
                 get
                 {
                     return _a;
@@ -200,9 +201,9 @@ namespace BaseBalanceScale.Kfixo
                 + Math.Pow((ind1.d - ind2.d), 2);
             return Math.Sqrt(soma);
         }
-        public static string[] ClassificadorDeAmostras(List<Individuo> C1, List<Individuo> C2 , int k)
+        public static string[] ClassificadorDeAmostras(List<Individuo> C1, List<Individuo> C2, int k)
         {
-            if(k%2 == 0)
+            if (k % 2 == 0)
             {
                 k--;
                 k = k <= 0 ? 1 : k;
@@ -218,7 +219,7 @@ namespace BaseBalanceScale.Kfixo
                     double distancia = obterDistanciaEuclidiana(elemento1, elemento2);
                     distanciaIndividuos.Add(new KeyValuePair<double, Individuo>(distancia, elemento2));
                 }
-                distanciaIndividuos.Sort((x,y) => x.Key.CompareTo(y.Key));
+                distanciaIndividuos.Sort((x, y) => x.Key.CompareTo(y.Key));
 
                 int contadorL = 0, contadorR = 0, contadorB = 0;
                 for (int i = 0; i < k; i++)
@@ -254,7 +255,7 @@ namespace BaseBalanceScale.Kfixo
             string[] database = CarregarDataBase();
             individuos = SeparadorDeAtributos(database);
             int quantidadeIndividuos = individuos.Count();
-            int K = 19;
+            int K = 7;
 
             List<Individuo> ListL = new List<Individuo>();
             List<Individuo> ListB = new List<Individuo>();
@@ -263,204 +264,208 @@ namespace BaseBalanceScale.Kfixo
             List<Individuo> Z2 = new List<Individuo>();
             List<Individuo> Z3 = new List<Individuo>();
 
-            Console.WriteLine("Iniciando... \n Database: Balance Scale utilizando K fixo.");
+            Console.WriteLine("Iniciando... \n Database: Balance Scale utilizando K alternado.");
+
             for (int contador = 1; contador <= 30; contador++)
-            { 
-            int acertos = 0, erros = 0;
-            double taxaDeAcerto = 0;
-            #region Divisão por Classe (Base pra dividir os Z's)
+            {
+                int acertos = 0, erros = 0;
+                double taxaDeAcerto = 0;
+                #region Divisão por Classe (Base pra dividir os Z's)
                 foreach (var indv in individuos)
-            {
-                if (indv.classe == "L")
                 {
-                    ListL.Add(indv);
-                    continue;
+                    if (indv.classe == "L")
+                    {
+                        ListL.Add(indv);
+                        continue;
+                    }
+                    if (indv.classe == "R")
+                    {
+                        ListR.Add(indv);
+                        continue;
+                    }
+                    if (indv.classe == "B")
+                    {
+                        ListB.Add(indv);
+                        continue;
+                    }
                 }
-                if (indv.classe == "R")
-                {
-                    ListR.Add(indv);
-                    continue;
-                }
-                if (indv.classe == "B")
-                {
-                    ListB.Add(indv);
-                    continue;
-                }
-            }
-            #endregion
-            #region Divisão dos Z's
-            Random randNum = new Random();
-            Individuo AuxAdd;
-            #region [L para Z1]
-                while (Z1.Count() < 72)
-            {
-                AuxAdd = ListL.ElementAt(randNum.Next(ListL.Count() - 1));
-                if (!AuxAdd.usado)
-                {
-                    AuxAdd.usado = true;
-                    Z1.Add(AuxAdd);
-                }
-            }
-            #endregion
-            #region [L para Z2] 
-            while (Z2.Count() < 72)
-            {
-                
-                AuxAdd = ListL.ElementAt(randNum.Next(ListL.Count() - 1));
-                if (!AuxAdd.usado)
-                {
-                    AuxAdd.usado = true;
-                    Z2.Add(AuxAdd);
-                }
-            }
                 #endregion
-            #region [L para Z3]
-            while (Z3.Count() < 144)
-            {
-                AuxAdd = ListL.Where(c => c.usado == false).First();
-                AuxAdd.usado = true;
-                Z3.Add(AuxAdd);
-            }
-            #endregion
-            #region [B para Z1]
-            while (Z1.Count() < 84) // 72 já inseridos (L) + 12 que deverão ser inseridos em (B)
-            {
-                AuxAdd = ListB.ElementAt(randNum.Next(ListB.Count() - 1));
-                if (!AuxAdd.usado)
+                #region Divisão dos Z's
+                Random randNum = new Random();
+                Individuo AuxAdd;
+                #region [L para Z1]
+                while (Z1.Count() < 72)
                 {
-                    AuxAdd.usado = true;
-                    Z1.Add(AuxAdd);
+                    AuxAdd = ListL.ElementAt(randNum.Next(ListL.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z1.Add(AuxAdd);
+                    }
                 }
-            }
-            #endregion
-            #region [B para Z2]
-            while (Z2.Count() < 84)
-            {
-                AuxAdd = ListB.ElementAt(randNum.Next(ListB.Count() - 1));
-                if (!AuxAdd.usado)
+                #endregion
+                #region [L para Z2] 
+                while (Z2.Count() < 72)
                 {
-                    AuxAdd.usado = true;
-                    Z2.Add(AuxAdd);
+
+                    AuxAdd = ListL.ElementAt(randNum.Next(ListL.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z2.Add(AuxAdd);
+                    }
                 }
-            }
-            #endregion
-            #region [B para Z3]
-            while (Z3.Count() < 169)
-            {
-                AuxAdd = ListB.Where(c => c.usado == false).First();
-                AuxAdd.usado = true;
-                Z3.Add(AuxAdd);
-            }
-            #endregion
-            #region [R para Z1]
-            while (Z1.Count() < 156) // 72 já inseridos (L) + 12 também já inseridos (B) e 72  que deverão ser inseridos em (R)
-            {
-                AuxAdd = ListR.ElementAt(randNum.Next(ListR.Count() - 1));
-                if (!AuxAdd.usado)
+                #endregion
+                #region [L para Z3]
+                while (Z3.Count() < 144)
                 {
+                    AuxAdd = ListL.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
-                    Z1.Add(AuxAdd);
+                    Z3.Add(AuxAdd);
                 }
-            }
-            #endregion
-            #region [R para Z2]
-            while (Z2.Count() < 156) // 72 já inseridos (L) + 12 também já inseridos (B) e 72  que deverão ser inseridos em (R)
-            {
-                AuxAdd = ListR.ElementAt(randNum.Next(ListR.Count() - 1));
-                if (!AuxAdd.usado)
+                #endregion
+                #region [B para Z1]
+                while (Z1.Count() < 84) // 72 já inseridos (L) + 12 que deverão ser inseridos em (B)
                 {
-                    AuxAdd.usado = true;
-                    Z2.Add(AuxAdd);
+                    AuxAdd = ListB.ElementAt(randNum.Next(ListB.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z1.Add(AuxAdd);
+                    }
                 }
-            }
-            #endregion
-            #region [R para Z3]
-            while (Z3.Count() < 313)
-            {
+                #endregion
+                #region [B para Z2]
+                while (Z2.Count() < 84)
+                {
+                    AuxAdd = ListB.ElementAt(randNum.Next(ListB.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z2.Add(AuxAdd);
+                    }
+                }
+                #endregion
+                #region [B para Z3]
+                while (Z3.Count() < 169)
+                {
+                    AuxAdd = ListB.Where(c => c.usado == false).First();
+                    AuxAdd.usado = true;
+                    Z3.Add(AuxAdd);
+                }
+                #endregion
+                #region [R para Z1]
+                while (Z1.Count() < 156) // 72 já inseridos (L) + 12 também já inseridos (B) e 72  que deverão ser inseridos em (R)
+                {
+                    AuxAdd = ListR.ElementAt(randNum.Next(ListR.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z1.Add(AuxAdd);
+                    }
+                }
+                #endregion
+                #region [R para Z2]
+                while (Z2.Count() < 156) // 72 já inseridos (L) + 12 também já inseridos (B) e 72  que deverão ser inseridos em (R)
+                {
+                    AuxAdd = ListR.ElementAt(randNum.Next(ListR.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z2.Add(AuxAdd);
+                    }
+                }
+                #endregion
+                #region [R para Z3]
+                while (Z3.Count() < 313)
+                {
                     AuxAdd = ListR.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
                     Z3.Add(AuxAdd);
-            }
-            #endregion
-            #endregion
-            string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
-            int a = 0;
-            Individuo auxTroca = null, auxTroca2 = null;
-            #region Verifica os errados em Z1
-            foreach (var metricaAcertos in Z1)
-            {
-                if (metricaAcertos.classe != classeObtida[a])
-                {
-                    metricaAcertos.errado = true;
                 }
-                //indicador de posição da classe - Ou seja, auxiliar do Foreach
-                a++;
-            }
-            #endregion
-            #region [Troca o que tá errado em Z1 com algum Z2 com classe igual]
-            while (Z1.Any(e => e.errado == true))
-            {
-                auxTroca = Z1.Where(e => e.errado == true).First();
-                auxTroca2 = Z2.Where(c => c.classe == auxTroca.classe).First();
-                Z1.Remove(auxTroca);
-                Z2.Remove(auxTroca2);
-                auxTroca.trocado = true;
-                auxTroca.errado = false;
-                auxTroca2.trocado = true;
-                Z1.Add(auxTroca2);
-                Z2.Add(auxTroca);
-            }
-            #endregion
-            #region [Limpeza das Variaveis para a "Próxima Rodada"]
-            foreach (var limpZ1 in Z1)
-            {
+                #endregion
+                #endregion
+                string[] classeObtida = ClassificadorDeAmostras(Z1, Z2, K);
+                int a = 0;
+                Individuo auxTroca = null, auxTroca2 = null;
+                #region Verifica os errados em Z1
+                foreach (var metricaAcertos in Z1)
+                {
+                    if (metricaAcertos.classe != classeObtida[a])
+                    {
+                        metricaAcertos.errado = true;
+                    }
+                    //indicador de posição da classe - Ou seja, auxiliar do Foreach
+                    a++;
+                }
+                #endregion
+                #region [Troca o que tá errado em Z1 com algum Z2 com classe igual]
+                while (Z1.Any(e => e.errado == true))
+                {
+                    auxTroca = Z1.Where(e => e.errado == true).First();
+                    auxTroca2 = Z2.Where(c => c.classe == auxTroca.classe).First();
+                    Z1.Remove(auxTroca);
+                    Z2.Remove(auxTroca2);
+                    auxTroca.trocado = true;
+                    auxTroca.errado = false;
+                    auxTroca2.trocado = true;
+                    Z1.Add(auxTroca2);
+                    Z2.Add(auxTroca);
+                }
+                #endregion
+                #region [Limpeza das Variaveis para a "Próxima Rodada"]
+                foreach (var limpZ1 in Z1)
+                {
                     limpZ1.trocado = false;
                     limpZ1.usado = false;
-            }
+                }
 
-            foreach (var limpZ2 in Z2)
-            {
+                foreach (var limpZ2 in Z2)
+                {
                     limpZ2.trocado = false;
                     limpZ2.usado = false;
-            }
-            #endregion
-            //Testa Z3 com Z2 e retorna os resultados.
-            classeObtida = ClassificadorDeAmostras(Z3, Z2, K);
+                }
+                #endregion
+                //Testa Z3 com Z2 e retorna os resultados.
+                classeObtida = ClassificadorDeAmostras(Z3, Z2, K);
                 #region Verifica os acertos em Z3
-             a = 0;
-            foreach (var metricaAcertos in Z3)
-            {
-                if (metricaAcertos.classe == classeObtida[a])
+                a = 0;
+                foreach (var metricaAcertos in Z3)
                 {
-                    acertos++;
+                    if (metricaAcertos.classe == classeObtida[a])
+                    {
+                        acertos++;
+                    }
+                    else
+                    {
+                        erros++;
+                    }
+                    //indicador de posição da classe - Ou seja, auxiliar do Foreach
+                    a++;
                 }
-                else
-                {
-                    erros++;
-                }
-                //indicador de posição da classe - Ou seja, auxiliar do Foreach
-                a++;
-            }
                 #endregion
 
-             #region [Grava a quantidade de acertos para fazer os relatorios depois]
-             taxaDeAcerto = (acertos * 100) / Z3.Count();
-            Indicadores indicador = new Indicadores(acertos, erros, taxaDeAcerto);
-            ResultadoTestes.Add(indicador);
-            #endregion
+                #region [Grava a quantidade de acertos para fazer os relatorios depois]
+                taxaDeAcerto = (acertos * 100) / Z3.Count();
+                Indicadores indicador = new Indicadores(acertos, erros, taxaDeAcerto);
+                ResultadoTestes.Add(indicador);
+                #endregion
 
-                Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "%");
+                Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "%" + "K:" + K);
+
+                K++;
             }
+
             Console.WriteLine("... \n...");
             #region [Calculo Final]
             double soma = 0, media, desvioPadrao;
-            foreach(var baseDeCalculo in ResultadoTestes)
+            foreach (var baseDeCalculo in ResultadoTestes)
             {
                 soma += baseDeCalculo.taxaDeAcerto;
             }
             media = soma / ResultadoTestes.Count();
             soma = 0;
-            foreach(var baseDeCalculo in ResultadoTestes)
+            foreach (var baseDeCalculo in ResultadoTestes)
             {
                 soma += Math.Pow((baseDeCalculo.taxaDeAcerto - media), 2);
             }

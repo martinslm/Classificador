@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseIris.Kalternado
+namespace BaseWireless.Kalternado
 {
     class Program
     {
@@ -12,18 +12,21 @@ namespace BaseIris.Kalternado
         public class Individuo
         {
             private string _classe;
-            private double _a, _b, _c, _d;
+            private double _a, _b, _c, _d, _e, _f, _g;
             private bool _trocado;
             private bool _usado;
             private bool _errado;
 
             //Construtor. Os Doubles variam de acordo com a quantidade de atributos da tabela.
-            public Individuo(string classe, double a, double b, double c, double d)
+            public Individuo(string classe, double a, double b, double c, double d, double e, double f, double g)
             {
                 _a = a;
                 _b = b;
                 _c = c;
                 _d = d;
+                _e = e;
+                _f = f;
+                _g = g;
                 _classe = classe;
                 _trocado = false;
             }
@@ -69,6 +72,39 @@ namespace BaseIris.Kalternado
                 set
                 {
                     _d = value;
+                }
+            }
+            public double e
+            {
+                get
+                {
+                    return _e;
+                }
+                set
+                {
+                    _e = value;
+                }
+            }
+            public double f
+            {
+                get
+                {
+                    return _f;
+                }
+                set
+                {
+                    _f = value;
+                }
+            }
+            public double g
+            {
+                get
+                {
+                    return _g;
+                }
+                set
+                {
+                    _g = value;
                 }
             }
             public string classe
@@ -170,7 +206,7 @@ namespace BaseIris.Kalternado
 
         public static string[] CarregarDataBase()
         {
-            string[] lines = System.IO.File.ReadAllLines(@"C:\iris.txt");
+            string[] lines = System.IO.File.ReadAllLines(@"C:\wireless.txt");
 
             return lines;
         }
@@ -182,10 +218,10 @@ namespace BaseIris.Kalternado
             foreach (var dados in dataBase)
             {
                 string[] colunas = dados.Split(',');
-                string classe = colunas[4];
-                double a = Convert.ToDouble(colunas[1]), b = Convert.ToDouble(colunas[2]), c = Convert.ToDouble(colunas[3]), d = Convert.ToDouble(colunas[0]);
+                string classe = colunas[7];
+                double a = Convert.ToDouble(colunas[1]), b = Convert.ToDouble(colunas[2]), c = Convert.ToDouble(colunas[3]), d = Convert.ToDouble(colunas[4]), e = Convert.ToDouble(colunas[5]), f = Convert.ToDouble(colunas[6]), g = Convert.ToDouble(colunas[0]);
 
-                Individuo individuo = new Individuo(classe, a, b, c, d);
+                Individuo individuo = new Individuo(classe, a, b, c, d, e, f, g);
                 individuos.Add(individuo);
             }
             return individuos;
@@ -198,7 +234,10 @@ namespace BaseIris.Kalternado
             double soma = Math.Pow((ind1.a - ind2.a), 2)
                 + Math.Pow((ind1.b - ind2.b), 2)
                 + Math.Pow((ind1.c - ind2.c), 2)
-                + Math.Pow((ind1.d - ind2.d), 2);
+                + Math.Pow((ind1.d - ind2.d), 2)
+                + Math.Pow((ind1.e - ind2.e), 2)
+                + Math.Pow((ind1.f - ind2.f), 2)
+                + Math.Pow((ind1.g - ind2.g), 2);
             return Math.Sqrt(soma);
         }
         public static string[] ClassificadorDeAmostras(List<Individuo> C1, List<Individuo> C2, int k)
@@ -221,25 +260,29 @@ namespace BaseIris.Kalternado
                 }
                 distanciaIndividuos.Sort((x, y) => x.Key.CompareTo(y.Key));
 
-                int contadorSet = 0, contadorVir = 0, contadorVer = 0;
+                int contadorum = 0, contadordois = 0, contadortres = 0, contadorquatro = 0;
                 for (int i = 0; i < k; i++)
                 {
                     string classe = distanciaIndividuos[i].Value.classe;
 
-                    if (classe == "Iris-setosa") //nome dos arquivos
-                        contadorSet++;
-                    if (classe == "Iris-versicolor")
-                        contadorVer++;
-                    if (classe == "Iris-virginica")
-                        contadorVir++;
+                    if (classe == "1") //nome dos arquivos
+                        contadorum++;
+                    if (classe == "2")
+                        contadordois++;
+                    if (classe == "3")
+                        contadortres++;
+                    if (classe == "4")
+                        contadorquatro++;
                 }
                 string classeClassificacao;
-                if (contadorSet >= contadorVer && contadorSet >= contadorVir)
-                    classeClassificacao = "Iris-setosa";
-                else if (contadorVer >= contadorSet && contadorVer >= contadorVir)
-                    classeClassificacao = "Iris-versicolor";
+                if (contadorum >= contadordois && contadorum >= contadortres && contadorum >= contadorquatro)
+                    classeClassificacao = "1";
+                else if (contadordois >= contadorum && contadordois >= contadortres && contadordois >= contadorquatro)
+                    classeClassificacao = "2";
+                else if (contadortres >= contadorum && contadortres >= contadordois && contadortres >= contadorquatro)
+                    classeClassificacao = "3";
                 else
-                    classeClassificacao = "Iris-virginica";
+                    classeClassificacao = "4";
                 classesC1[posicao] = classeClassificacao;
                 posicao++;
                 distanciaIndividuos = null;
@@ -255,16 +298,17 @@ namespace BaseIris.Kalternado
             string[] database = CarregarDataBase();
             individuos = SeparadorDeAtributos(database);
             int quantidadeIndividuos = individuos.Count();
-            int K = 33;
+            int K = 37;
 
-            List<Individuo> ListSet = new List<Individuo>();
-            List<Individuo> ListVer = new List<Individuo>();
-            List<Individuo> ListVir = new List<Individuo>();
+            List<Individuo> Listum = new List<Individuo>();
+            List<Individuo> Listdois = new List<Individuo>();
+            List<Individuo> Listtres = new List<Individuo>();
+            List<Individuo> Listquatro = new List<Individuo>();
             List<Individuo> Z1 = new List<Individuo>();
             List<Individuo> Z2 = new List<Individuo>();
             List<Individuo> Z3 = new List<Individuo>();
 
-            Console.WriteLine("Iniciando... \n Database: Iris utilizando K Alternado.");
+            Console.WriteLine("Iniciando... \n Database: Wireless utilizando K Alternado.");
             for (int contador = 1; contador <= 30; contador++)
             {
                 int acertos = 0, erros = 0;
@@ -272,19 +316,24 @@ namespace BaseIris.Kalternado
                 #region Divisão por Classe (Base pra dividir os Z's)
                 foreach (var indv in individuos)
                 {
-                    if (indv.classe == "Iris-setosa")
+                    if (indv.classe == "1")
                     {
-                        ListSet.Add(indv);
+                        Listum.Add(indv);
                         continue;
                     }
-                    if (indv.classe == "Iris-virginica")
+                    if (indv.classe == "2")
                     {
-                        ListVir.Add(indv);
+                        Listdois.Add(indv);
                         continue;
                     }
-                    if (indv.classe == "Iris-versicolor")
+                    if (indv.classe == "3")
                     {
-                        ListVer.Add(indv);
+                        Listtres.Add(indv);
+                        continue;
+                    }
+                    if (indv.classe == "4")
+                    {
+                        Listquatro.Add(indv);
                         continue;
                     }
                 }
@@ -292,10 +341,10 @@ namespace BaseIris.Kalternado
                 #region Divisão dos Z's
                 Random randNum = new Random();
                 Individuo AuxAdd;
-                #region [Setosa para Z1]
-                while (Z1.Count() < 13)
+                #region [um para Z1]
+                while (Z1.Count() < 125)
                 {
-                    AuxAdd = ListSet.ElementAt(randNum.Next(ListSet.Count() - 1));
+                    AuxAdd = Listum.ElementAt(randNum.Next(Listum.Count() - 1));
                     if (!AuxAdd.usado)
                     {
                         AuxAdd.usado = true;
@@ -303,11 +352,11 @@ namespace BaseIris.Kalternado
                     }
                 }
                 #endregion
-                #region [Setosa para Z2] 
-                while (Z2.Count() < 13)
+                #region [um para Z2] 
+                while (Z2.Count() < 125)
                 {
 
-                    AuxAdd = ListSet.ElementAt(randNum.Next(ListSet.Count() - 1));
+                    AuxAdd = Listum.ElementAt(randNum.Next(Listum.Count() - 1));
                     if (!AuxAdd.usado)
                     {
                         AuxAdd.usado = true;
@@ -315,18 +364,18 @@ namespace BaseIris.Kalternado
                     }
                 }
                 #endregion
-                #region [Setosa para Z3]
-                while (Z3.Count() < 24)
+                #region [um para Z3]
+                while (Z3.Count() < 250)
                 {
-                    AuxAdd = ListSet.Where(c => c.usado == false).First();
+                    AuxAdd = Listum.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
                     Z3.Add(AuxAdd);
                 }
                 #endregion
-                #region [Versicolor para Z1]
-                while (Z1.Count() < 26)
+                #region [dois para Z1]
+                while (Z1.Count() < 250)
                 {
-                    AuxAdd = ListVer.ElementAt(randNum.Next(ListVer.Count() - 1));
+                    AuxAdd = Listdois.ElementAt(randNum.Next(Listdois.Count() - 1));
                     if (!AuxAdd.usado)
                     {
                         AuxAdd.usado = true;
@@ -334,10 +383,10 @@ namespace BaseIris.Kalternado
                     }
                 }
                 #endregion
-                #region [Versicolor para Z2]
-                while (Z2.Count() < 26)
+                #region [dois para Z2]
+                while (Z2.Count() < 250)
                 {
-                    AuxAdd = ListVer.ElementAt(randNum.Next(ListVer.Count() - 1));
+                    AuxAdd = Listdois.ElementAt(randNum.Next(Listdois.Count() - 1));
                     if (!AuxAdd.usado)
                     {
                         AuxAdd.usado = true;
@@ -345,18 +394,18 @@ namespace BaseIris.Kalternado
                     }
                 }
                 #endregion
-                #region [Versicolor para Z3]
-                while (Z3.Count() < 48)
+                #region [dois para Z3]
+                while (Z3.Count() < 500)
                 {
-                    AuxAdd = ListVer.Where(c => c.usado == false).First();
+                    AuxAdd = Listdois.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
                     Z3.Add(AuxAdd);
                 }
                 #endregion
-                #region [Virginica para Z1]
-                while (Z1.Count() < 38)
+                #region [tres para Z1]
+                while (Z1.Count() < 375)
                 {
-                    AuxAdd = ListVir.ElementAt(randNum.Next(ListVir.Count() - 1));
+                    AuxAdd = Listtres.ElementAt(randNum.Next(Listtres.Count() - 1));
                     if (!AuxAdd.usado)
                     {
                         AuxAdd.usado = true;
@@ -364,10 +413,10 @@ namespace BaseIris.Kalternado
                     }
                 }
                 #endregion
-                #region [Virginica para Z2]
-                while (Z2.Count() < 38)
+                #region [tres para Z2]
+                while (Z2.Count() < 375)
                 {
-                    AuxAdd = ListVir.ElementAt(randNum.Next(ListVir.Count() - 1));
+                    AuxAdd = Listtres.ElementAt(randNum.Next(Listtres.Count() - 1));
                     if (!AuxAdd.usado)
                     {
                         AuxAdd.usado = true;
@@ -375,10 +424,40 @@ namespace BaseIris.Kalternado
                     }
                 }
                 #endregion
-                #region [Virginica para Z3]
-                while (Z3.Count() < 74)
+                #region [tres para Z3]
+                while (Z3.Count() < 750)
                 {
-                    AuxAdd = ListVir.Where(c => c.usado == false).First();
+                    AuxAdd = Listtres.Where(c => c.usado == false).First();
+                    AuxAdd.usado = true;
+                    Z3.Add(AuxAdd);
+                }
+                #endregion
+                #region [quatro para Z1]
+                while (Z1.Count() < 500)
+                {
+                    AuxAdd = Listquatro.ElementAt(randNum.Next(Listquatro.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z1.Add(AuxAdd);
+                    }
+                }
+                #endregion
+                #region [quatro para Z2]
+                while (Z2.Count() < 500)
+                {
+                    AuxAdd = Listquatro.ElementAt(randNum.Next(Listquatro.Count() - 1));
+                    if (!AuxAdd.usado)
+                    {
+                        AuxAdd.usado = true;
+                        Z2.Add(AuxAdd);
+                    }
+                }
+                #endregion
+                #region [quatro para Z3]
+                while (Z3.Count() < 1000)
+                {
+                    AuxAdd = Listquatro.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
                     Z3.Add(AuxAdd);
                 }

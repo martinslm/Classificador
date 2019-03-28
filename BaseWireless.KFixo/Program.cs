@@ -342,7 +342,7 @@ namespace BaseIris.Kfixo
                 Random randNum = new Random();
                 Individuo AuxAdd;
                 #region [Setosa para Z1]
-                while (Z1.Count() < 13)
+                while (Z1.Count() < 125)
                 {
                     AuxAdd = Listum.ElementAt(randNum.Next(Listum.Count() - 1));
                     if (!AuxAdd.usado)
@@ -353,7 +353,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [um para Z2] 
-                while (Z2.Count() < 13)
+                while (Z2.Count() < 125)
                 {
 
                     AuxAdd = Listum.ElementAt(randNum.Next(Listum.Count() - 1));
@@ -365,7 +365,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [um para Z3]
-                while (Z3.Count() < 24)
+                while (Z3.Count() < 250)
                 {
                     AuxAdd = Listum.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
@@ -373,7 +373,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [dois para Z1]
-                while (Z1.Count() < 26)
+                while (Z1.Count() < 250)
                 {
                     AuxAdd = Listdois.ElementAt(randNum.Next(Listdois.Count() - 1));
                     if (!AuxAdd.usado)
@@ -384,7 +384,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [dois para Z2]
-                while (Z2.Count() < 26)
+                while (Z2.Count() < 250)
                 {
                     AuxAdd = Listdois.ElementAt(randNum.Next(Listdois.Count() - 1));
                     if (!AuxAdd.usado)
@@ -395,7 +395,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [dois para Z3]
-                while (Z3.Count() < 48)
+                while (Z3.Count() < 500)
                 {
                     AuxAdd = Listdois.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
@@ -403,7 +403,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [tres para Z1]
-                while (Z1.Count() < 38)
+                while (Z1.Count() < 375)
                 {
                     AuxAdd = Listtres.ElementAt(randNum.Next(Listtres.Count() - 1));
                     if (!AuxAdd.usado)
@@ -414,7 +414,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [tres para Z2]
-                while (Z2.Count() < 38)
+                while (Z2.Count() < 375)
                 {
                     AuxAdd = Listtres.ElementAt(randNum.Next(Listtres.Count() - 1));
                     if (!AuxAdd.usado)
@@ -425,7 +425,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [tres para Z3]
-                while (Z3.Count() < 74)
+                while (Z3.Count() < 750)
                 {
                     AuxAdd = Listtres.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;
@@ -433,7 +433,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [quatro para Z1]
-                while (Z1.Count() < 38)
+                while (Z1.Count() < 500)
                 {
                     AuxAdd = Listquatro.ElementAt(randNum.Next(Listquatro.Count() - 1));
                     if (!AuxAdd.usado)
@@ -444,7 +444,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [quatro para Z2]
-                while (Z2.Count() < 38)
+                while (Z2.Count() < 500)
                 {
                     AuxAdd = Listquatro.ElementAt(randNum.Next(Listquatro.Count() - 1));
                     if (!AuxAdd.usado)
@@ -455,7 +455,7 @@ namespace BaseIris.Kfixo
                 }
                 #endregion
                 #region [quatro para Z3]
-                while (Z3.Count() < 74)
+                while (Z3.Count() < 1000)
                 {
                     AuxAdd = Listquatro.Where(c => c.usado == false).First();
                     AuxAdd.usado = true;

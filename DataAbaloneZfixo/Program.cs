@@ -257,16 +257,15 @@ namespace BaseIris.Kfixo
             int quantidadeIndividuos = individuos.Count();
             int K = 5;
 
-            List<Individuo> ListSet = new List<Individuo>();
-            List<Individuo> ListVer = new List<Individuo>();
-            List<Individuo> ListVir = new List<Individuo>();
-            List<Individuo> Z1 = new List<Individuo>();
-            List<Individuo> Z2 = new List<Individuo>();
-            List<Individuo> Z3 = new List<Individuo>();
-
             Console.WriteLine("Iniciando... \n Database: Iris utilizando K fixo.");
             for (int contador = 1; contador <= 30; contador++)
             {
+                List<Individuo> ListSet = new List<Individuo>();
+                List<Individuo> ListVer = new List<Individuo>();
+                List<Individuo> ListVir = new List<Individuo>();
+                List<Individuo> Z1 = new List<Individuo>();
+                List<Individuo> Z2 = new List<Individuo>();
+                List<Individuo> Z3 = new List<Individuo>();
                 int acertos = 0, erros = 0;
                 double taxaDeAcerto = 0;
                 #region Divisão por Classe (Base pra dividir os Z's)
@@ -450,6 +449,17 @@ namespace BaseIris.Kfixo
                 ResultadoTestes.Add(indicador);
                 #endregion
 
+                foreach (var setarIndividuos in individuos)
+                {
+                    setarIndividuos.usado = false;
+                }
+
+                ListSet = null;
+                ListVer = null;
+                ListVir = null;
+                Z1 = null;
+                Z2 = null;
+                Z3 = null;
                 Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "%");
             }
             Console.WriteLine("... \n...");

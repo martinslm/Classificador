@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseBalanceScale.Kfixo
 {
@@ -256,16 +254,16 @@ namespace BaseBalanceScale.Kfixo
             int quantidadeIndividuos = individuos.Count();
             int K = 19;
 
-            List<Individuo> ListL = new List<Individuo>();
-            List<Individuo> ListB = new List<Individuo>();
-            List<Individuo> ListR = new List<Individuo>();
-            List<Individuo> Z1 = new List<Individuo>();
-            List<Individuo> Z2 = new List<Individuo>();
-            List<Individuo> Z3 = new List<Individuo>();
-
             Console.WriteLine("Iniciando... \n Database: Balance Scale utilizando K fixo.");
             for (int contador = 1; contador <= 30; contador++)
-            { 
+            {
+                List<Individuo> ListL = new List<Individuo>();
+                List<Individuo> ListB = new List<Individuo>();
+                List<Individuo> ListR = new List<Individuo>();
+                List<Individuo> Z1 = new List<Individuo>();
+                List<Individuo> Z2 = new List<Individuo>();
+                List<Individuo> Z3 = new List<Individuo>();
+
             int acertos = 0, erros = 0;
             double taxaDeAcerto = 0;
             #region Divisão por Classe (Base pra dividir os Z's)
@@ -449,7 +447,19 @@ namespace BaseBalanceScale.Kfixo
             ResultadoTestes.Add(indicador);
             #endregion
 
-                Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "%");
+                Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "%\n");
+
+                foreach(var setarIndividuos in individuos)
+                {
+                    setarIndividuos.usado = false;
+                }
+                ListB = null;
+                ListL = null;
+                ListR = null;
+                Z1 = null;
+                Z2 = null;
+                Z3 = null;
+
             }
             Console.WriteLine("... \n...");
             #region [Calculo Final]

@@ -257,17 +257,17 @@ namespace BaseBalanceScale.Kalternado
             int quantidadeIndividuos = individuos.Count();
             int K = 7;
 
-            List<Individuo> ListL = new List<Individuo>();
-            List<Individuo> ListB = new List<Individuo>();
-            List<Individuo> ListR = new List<Individuo>();
-            List<Individuo> Z1 = new List<Individuo>();
-            List<Individuo> Z2 = new List<Individuo>();
-            List<Individuo> Z3 = new List<Individuo>();
-
             Console.WriteLine("Iniciando... \n Database: Balance Scale utilizando K alternado.");
 
             for (int contador = 1; contador <= 30; contador++)
             {
+                List<Individuo> ListL = new List<Individuo>();
+                List<Individuo> ListB = new List<Individuo>();
+                List<Individuo> ListR = new List<Individuo>();
+                List<Individuo> Z1 = new List<Individuo>();
+                List<Individuo> Z2 = new List<Individuo>();
+                List<Individuo> Z3 = new List<Individuo>();
+
                 int acertos = 0, erros = 0;
                 double taxaDeAcerto = 0;
                 #region Divisão por Classe (Base pra dividir os Z's)
@@ -453,6 +453,17 @@ namespace BaseBalanceScale.Kalternado
 
                 Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "%" + "K:" + K);
 
+                foreach (var setarIndividuos in individuos)
+                {
+                    setarIndividuos.usado = false;
+                }
+
+                ListB = null;
+                ListL = null;
+                ListR = null;
+                Z1 = null;
+                Z2 = null;
+                Z3 = null;
                 K++;
             }
 

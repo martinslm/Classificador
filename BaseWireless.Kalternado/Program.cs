@@ -300,17 +300,17 @@ namespace BaseWireless.Kalternado
             int quantidadeIndividuos = individuos.Count();
             int K = 37;
 
-            List<Individuo> Listum = new List<Individuo>();
-            List<Individuo> Listdois = new List<Individuo>();
-            List<Individuo> Listtres = new List<Individuo>();
-            List<Individuo> Listquatro = new List<Individuo>();
-            List<Individuo> Z1 = new List<Individuo>();
-            List<Individuo> Z2 = new List<Individuo>();
-            List<Individuo> Z3 = new List<Individuo>();
-
             Console.WriteLine("Iniciando... \n Database: Wireless utilizando K Alternado.");
             for (int contador = 1; contador <= 30; contador++)
             {
+
+                List<Individuo> Listum = new List<Individuo>();
+                List<Individuo> Listdois = new List<Individuo>();
+                List<Individuo> Listtres = new List<Individuo>();
+                List<Individuo> Listquatro = new List<Individuo>();
+                List<Individuo> Z1 = new List<Individuo>();
+                List<Individuo> Z2 = new List<Individuo>();
+                List<Individuo> Z3 = new List<Individuo>();
                 int acertos = 0, erros = 0;
                 double taxaDeAcerto = 0;
                 #region Divisão por Classe (Base pra dividir os Z's)
@@ -530,7 +530,18 @@ namespace BaseWireless.Kalternado
                 #endregion
 
                 Console.WriteLine("Rodada " + contador + "...\n" + "Taxa de Acerto: " + taxaDeAcerto + "% " + "K:" + K);
+                foreach (var setarIndividuos in individuos)
+                {
+                    setarIndividuos.usado = false;
+                }
 
+                Listum = null;
+                Listdois = null;
+                Listtres = null;
+                Listquatro = null;
+                Z1 = null;
+                Z2 = null;
+                Z3 = null;
                 K--;
             }
             Console.WriteLine("... \n...");
